@@ -28,56 +28,30 @@ const layerControl = L.control.layers(
   null,
   { position: 'topleft' }
 ).addTo(map);
-
-
-const places = {
-  type: "FeatureCollection",
-  features: [
-    {
-      type: "Feature",
-      properties: {
-        name: "برج میلاد",
-        city: "تهران"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [51.3756, 35.7448]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        name: "میدان نقش جهان",
-        city: "اصفهان"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [51.6776, 32.6573]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        name: "حافظیه",
-        city: "شیراز"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [52.5511, 29.6219]
-      }
-    }
-  ]
-};
-
-const placesLayer = L.geoJSON(places, {
-  onEachFeature: (feature, layer) => {
-    layer.bindPopup(
-      `<b>${feature.properties.name}</b><br>شهر: ${feature.properties.city}`
-    );
+ 
+fetch('place.geojson')
+.then((response) => {
+  if(!response.ok) {
+    throw new Error('فایل داده یافت نشد');
   }
-}).addTo(map);
 
-layerControl.addOverlay(placesLayer, 'مکان‌های گردشگری');
+  return response.json();
+})
+.then((place) => {
+  const placeLayer = L.geoJSON(place, {
+    onEachFeature: (feature, layer ) => {
+      layer.bindPopup(
+        `<b>${feature.properties.name}</b><br>
+          شهر: ${feature.properties.city}`
+      );
+    }
+  })/addto(map);
+
+  layerControl.addOverlay(placeLayer, 'مکان‌های گردشگری');
+})
+.catch((error) => {
+  console.error(error);
+});
 
 map.on('click', (event) => {
   const latitude = event.latlng.lat.toFixed(5);
