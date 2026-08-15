@@ -88,3 +88,35 @@ map.on('click', (event) => {
   .setContent(`مختصات: ${latitude}, ${longitude}`)
   .openOn(map);
 })
+
+let userMarker;
+let accuracyCircle;
+
+document.getElementById('locate-button').addEventListener('click', () => {
+  map.locate({
+    setView: true,
+    maxZoom: 14,
+    enableHighAccuracy: true 
+  });
+});
+
+map.on('locationFound', (event) => {
+  if(userMarker) map.removeLayer(userMarker);
+  if(accuracyCircle) map.removeLayer(accuracyCircle);
+
+  userMarker = L.marker(event.latlng)
+  .addTo(map)
+  .bindPopup('مکان فعلی شما')
+  .openPopup();
+
+  accuracyCircle = L.circle(event.latlng, {
+    radius : event.accuracy,
+    color: '#1976d2',
+    fillColor: '#1976d2',
+    fillOpacity: 0.15
+  }).addTo(map);
+});
+
+map.on('locationerror' , () => {
+  alert('دسترسی موقعیت مکانی فعای نیست');
+});
