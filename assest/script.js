@@ -29,7 +29,7 @@ const layerControl = L.control.layers(
   { position: 'topleft' }
 ).addTo(map);
  
-fetch('place.geojson')
+fetch('assest/places.geojson')
 .then((response) => {
   if(!response.ok) {
     throw new Error('فایل داده یافت نشد');
@@ -45,7 +45,7 @@ fetch('place.geojson')
           شهر: ${feature.properties.city}`
       );
     }
-  })/addto(map);
+  }).addTo(map);
 
   layerControl.addOverlay(placeLayer, 'مکان‌های گردشگری');
 })
@@ -74,7 +74,7 @@ document.getElementById('locate-button').addEventListener('click', () => {
   });
 });
 
-map.on('locationFound', (event) => {
+map.on('locationfound', (event) => {
   if(userMarker) map.removeLayer(userMarker);
   if(accuracyCircle) map.removeLayer(accuracyCircle);
 
