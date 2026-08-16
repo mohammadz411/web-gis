@@ -53,14 +53,27 @@ fetch('assest/places.geojson')
   console.error(error);
 });
 
-map.on('click', (event) => {
-  const latitude = event.latlng.lat.toFixed(5);
-  const longitude = event.latlng.lng.toFixed(5);
+const userPointsLayer = L.layerGroup().addTo(map);
 
-  L.popup()
-  .setLatLng(event.latlng)
-  .setContent(`مختصات: ${latitude}, ${longitude}`)
-  .openOn(map);
+layerControl.addOverlay(userPointsLayer, 'نقاط ثبت شده');
+
+map.on('click', (event) => {
+  const name = prompt('نام مکان را وارد کن:');
+
+  if(!name  || !name.trim){
+    return;
+  }
+
+  const {lat , lng } = event.latlng;
+
+  L.marker([let, lng])
+    .addTo(userPointsLayer)
+    .bindPopup(`
+      <b>${name.trim()}</b><br>
+      عرض جغرافیایی: ${lat.toFixed(5)}<br>
+      طول جغرافیایی: ${lng.toFixed(5)}
+    `)
+    .openPopup();
 })
 
 let userMarker;
