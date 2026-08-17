@@ -126,3 +126,24 @@ map.on('locationfound', (event) => {
 map.on('locationerror' , () => {
   alert('دسترسی موقعیت مکانی فعای نیست');
 });
+
+document
+  .getElementById('clear-points-button')
+  .addEventListener('click', () => {
+    if (savedPoints.length === 0) {
+      alert('نقطه‌ای برای پاک‌کردن وجود ندارد.');
+      return;
+    }
+
+    const confirmed = confirm(
+      'همهٔ نقاط ثبت‌شده پاک شوند؟'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    userPointsLayer.clearLayers();
+    savedPoints.length = 0;
+    localStorage.removeItem('userPoints');
+  });
