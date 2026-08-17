@@ -53,27 +53,46 @@ fetch('assest/places.geojson')
   console.error(error);
 });
 
-const userPointsLayer = L.layerGroup().addTo(map);
+const userPointLayer = L.layerGroup().addTo(map);
 
-layerControl.addOverlay(userPointsLayer, 'نقاط ثبت شده');
+layerControl.addOverlay(userPointLayer,'نقاط ثبت شده');
+
+const savedPoints = JSON.parse(
+  localStorage.getItem('userPoints') || '[]');
+
+function showUserPoint(point){
+  return L.marker([point.lat, point.lng])
+  .addTo(userPointLayer)
+  .bindPopup(`
+      <b>${point.name}</b><br>
+      عرض جغرافیایی: ${point.lat.toFixed(5)}<br>
+      طول جغرافیایی: ${point.lng.toFixed(5)}
+    `);
+}
+
+savedPoints.forEach(showUserPoint);
 
 map.on('click', (event) => {
-  const name = prompt('نام مکان را وارد کن:');
+  const name = prompt('نام مکان را وارد کن')
 
-  if(!name  || !name.trim){
+  if(!name || !name.trim()){
     return;
   }
 
-  const {lat , lng } = event.latlng;
+  const point = {
+    name: name.trim(),
+    lat: event.latlng.lat,
+    lng: event.latlng.lng,
+  };
 
-  L.marker([let, lng])
-    .addTo(userPointsLayer)
-    .bindPopup(`
-      <b>${name.trim()}</b><br>
-      عرض جغرافیایی: ${lat.toFixed(5)}<br>
-      طول جغرافیایی: ${lng.toFixed(5)}
-    `)
-    .openPopup();
+  savedPoints.push(point);
+
+  localStorage.setItem(
+    'userPoints',
+    JSON.stringify(savedPoints)
+  );
+
+  showUserPoint(point).openPopup();
 })
 
 let userMarker;
